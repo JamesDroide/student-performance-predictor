@@ -1,0 +1,18 @@
+# Preprocesamiento y manipulación de datos
+pandas
+numpy
+scikit-learn
+
+# Modelado
+xgboost
+
+# Visualización
+matplotlib
+seaborn
+
+# Guardado de modelos
+joblib
+
+# Jupyter
+notebook
+ipykernel
