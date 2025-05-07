@@ -1,10 +1,9 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-# Función para cargar y preprocesar los datos
-def cargar_y_preprocesar_datos(ruta_csv, normalizar=True):
-
-    #Cargar el CSV
+# Función para cargar, preprocesar los datos y guardar el CSV procesado
+def cargar_y_preprocesar_datos(ruta_csv, normalizar=True, columnas_a_normalizar=None, guardar_csv=False, ruta_guardado=None):
+    # Cargar el CSV
     df = pd.read_csv(ruta_csv)
 
     # Renombrar columnas
@@ -68,15 +67,18 @@ def cargar_y_preprocesar_datos(ruta_csv, normalizar=True):
             df = df[(df[col] >= lim_inf) & (df[col] <= lim_sup)]
         return df
 
-    columnas_numericas = ['horas_estudio', 'asistencia', 'actividad_fisica', 'calificacion_examen']
+    # Remover outliers para todas las columnas numéricas
+    columnas_numericas = df.select_dtypes(include=['int64', 'float64']).columns
     df = remover_outliers_tukey(df, columnas_numericas)
 
     # Codificación de variables categóricas
     df = pd.get_dummies(df, drop_first=True)
 
     # Normalización de datos
-    if normalizar:
-        columnas_a_normalizar = ['horas_estudio', 'asistencia', 'actividad_fisica']
+    if normalizar and columnas_a_normalizar is not None:
+        # Verificar que las columnas a normalizar son numéricas
+        columnas_a_normalizar = [col for col in columnas_a_normalizar if
+                                 col in df.select_dtypes(include=['int64', 'float64']).columns]
         scaler = MinMaxScaler()
         df[columnas_a_normalizar] = scaler.fit_transform(df[columnas_a_normalizar])
 
